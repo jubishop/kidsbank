@@ -81,12 +81,13 @@ router.post('/accounts/:id/deposit', async (req, res) => {
   try {
     const accountId = req.params.id;
     const amount = parseFloat(req.body.amount);
+    const description = req.body.description || null;
 
     if (isNaN(amount) || amount <= 0) {
       return res.redirect(`/accounts/${accountId}?error=` + encodeURIComponent('Please enter a valid positive amount'));
     }
 
-    const transaction = await transactionService.deposit(accountId, amount);
+    const transaction = await transactionService.deposit(accountId, amount, description);
     res.redirect(`/accounts/${accountId}?success=` + encodeURIComponent(`Deposited $${transaction.amount.toFixed(2)}. New balance: $${transaction.balanceAfter.toFixed(2)}`));
   } catch (error) {
     console.error('Error processing deposit:', error);
@@ -101,12 +102,13 @@ router.post('/accounts/:id/withdraw', async (req, res) => {
   try {
     const accountId = req.params.id;
     const amount = parseFloat(req.body.amount);
+    const description = req.body.description || null;
 
     if (isNaN(amount) || amount <= 0) {
       return res.redirect(`/accounts/${accountId}?error=` + encodeURIComponent('Please enter a valid positive amount'));
     }
 
-    const transaction = await transactionService.withdraw(accountId, amount);
+    const transaction = await transactionService.withdraw(accountId, amount, description);
     res.redirect(`/accounts/${accountId}?success=` + encodeURIComponent(`Withdrew $${transaction.amount.toFixed(2)}. New balance: $${transaction.balanceAfter.toFixed(2)}`));
   } catch (error) {
     console.error('Error processing withdrawal:', error);

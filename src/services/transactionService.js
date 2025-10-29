@@ -28,9 +28,10 @@ function validateAmount(amount) {
  * Process a deposit transaction
  * @param {string} accountId - The account ID
  * @param {number} amount - The deposit amount
+ * @param {string} description - Optional description
  * @returns {Promise<Object>} The created transaction
  */
-async function deposit(accountId, amount) {
+async function deposit(accountId, amount, description = null) {
   validateAmount(amount);
 
   const account = await accountService.getAccount(accountId);
@@ -49,7 +50,7 @@ async function deposit(accountId, amount) {
     amount: roundToTwoDecimals(amount),
     balanceAfter: newBalance,
     timestamp: new Date().toISOString(),
-    description: null
+    description: description && description.trim() ? description.trim() : null
   };
 
   // Update account balance and create transaction
@@ -63,9 +64,10 @@ async function deposit(accountId, amount) {
  * Process a withdrawal transaction
  * @param {string} accountId - The account ID
  * @param {number} amount - The withdrawal amount
+ * @param {string} description - Optional description
  * @returns {Promise<Object>} The created transaction
  */
-async function withdraw(accountId, amount) {
+async function withdraw(accountId, amount, description = null) {
   validateAmount(amount);
 
   const account = await accountService.getAccount(accountId);
@@ -89,7 +91,7 @@ async function withdraw(accountId, amount) {
     amount: roundToTwoDecimals(amount),
     balanceAfter: newBalance,
     timestamp: new Date().toISOString(),
-    description: null
+    description: description && description.trim() ? description.trim() : null
   };
 
   // Update account balance and create transaction
