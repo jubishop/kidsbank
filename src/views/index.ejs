@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kids Finance Tracker</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>💰 Kids Finance Tracker</h1>
+      <p class="subtitle">Learn to save and grow your money!</p>
+    </header>
+
+    <% if (error) { %>
+      <div class="message error-message">
+        ❌ <%= error %>
+      </div>
+    <% } %>
+
+    <% if (success) { %>
+      <div class="message success-message">
+        ✅ <%= success %>
+      </div>
+    <% } %>
+
+    <div class="actions">
+      <a href="/accounts/new" class="btn btn-primary">➕ Create New Account</a>
+    </div>
+
+    <div class="accounts-grid">
+      <% if (accounts.length === 0) { %>
+        <div class="empty-state">
+          <p>No accounts yet. Create one to get started!</p>
+        </div>
+      <% } else { %>
+        <% accounts.forEach(account => { %>
+          <div class="account-card">
+            <h2><%= account.name %></h2>
+            <div class="balance">$<%= account.balance.toFixed(2) %></div>
+            <div class="interest-rate">
+              Interest: <%= (account.interestRate * 100).toFixed(2) %>% weekly
+            </div>
+            <div class="card-actions">
+              <a href="/accounts/<%= account.id %>" class="btn btn-secondary">View Account</a>
+            </div>
+          </div>
+        <% }); %>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

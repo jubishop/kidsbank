@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= account.name %>'s Settings - Kids Finance Tracker</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>⚙️ Account Settings</h1>
+      <a href="/accounts/<%= account.id %>" class="back-link">← Back to Account</a>
+    </header>
+
+    <% if (error) { %>
+      <div class="message error-message">
+        ❌ <%= error %>
+      </div>
+    <% } %>
+
+    <% if (success) { %>
+      <div class="message success-message">
+        ✅ <%= success %>
+      </div>
+    <% } %>
+
+    <div class="settings-container">
+      <h2><%= account.name %>'s Account</h2>
+      <p class="info-text">Configure the weekly interest rate for this account. Interest is automatically applied every Monday.</p>
+
+      <div class="current-info">
+        <p><strong>Current Balance:</strong> $<%= account.balance.toFixed(2) %></p>
+        <p><strong>Current Interest Rate:</strong> <%= (account.interestRate * 100).toFixed(2) %>% weekly</p>
+      </div>
+
+      <div class="form-container">
+        <h3>Update Interest Rate</h3>
+        <form action="/accounts/<%= account.id %>/interest-rate" method="POST">
+          <div class="form-group">
+            <label for="rate">Weekly Interest Rate (%):</label>
+            <input
+              type="number"
+              id="rate"
+              name="rate"
+              step="0.01"
+              min="0"
+              value="<%= (account.interestRate * 100).toFixed(2) %>"
+              required
+              placeholder="0.00"
+            >
+            <small class="form-help">Enter percentage (e.g., 5 for 5% weekly interest)</small>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Update Interest Rate</button>
+            <a href="/accounts/<%= account.id %>" class="btn btn-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+
+      <div class="info-box">
+        <h3>💡 How Interest Works</h3>
+        <ul>
+          <li>Interest is calculated as: <strong>Balance × Interest Rate</strong></li>
+          <li>Interest is applied automatically every Monday</li>
+          <li>For example, with a balance of $100 and 5% rate, you'll earn $5 each Monday</li>
+          <li>The more you save, the more interest you earn!</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

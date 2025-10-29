@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= account.name %>'s Account - Kids Finance Tracker</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><%= account.name %>'s Account</h1>
+      <a href="/" class="back-link">← Back to Accounts</a>
+    </header>
+
+    <% if (error) { %>
+      <div class="message error-message">
+        ❌ <%= error %>
+      </div>
+    <% } %>
+
+    <% if (success) { %>
+      <div class="message success-message">
+        ✅ <%= success %>
+      </div>
+    <% } %>
+
+    <div class="account-header">
+      <div class="balance-display">
+        <div class="balance-label">Current Balance</div>
+        <div class="balance-amount">$<%= account.balance.toFixed(2) %></div>
+      </div>
+      <div class="account-info">
+        <p><strong>Interest Rate:</strong> <%= (account.interestRate * 100).toFixed(2) %>% weekly</p>
+        <a href="/accounts/<%= account.id %>/settings" class="btn btn-secondary">⚙️ Settings</a>
+      </div>
+    </div>
+
+    <div class="transaction-forms">
+      <div class="form-container">
+        <h2>💵 Deposit Money</h2>
+        <form action="/accounts/<%= account.id %>/deposit" method="POST">
+          <div class="form-group">
+            <label for="deposit-amount">Amount:</label>
+            <input
+              type="number"
+              id="deposit-amount"
+              name="amount"
+              step="0.01"
+              min="0.01"
+              required
+              placeholder="0.00"
+            >
+          </div>
+          <button type="submit" class="btn btn-success">Deposit</button>
+        </form>
+      </div>
+
+      <div class="form-container">
+        <h2>💸 Withdraw Money</h2>
+        <form action="/accounts/<%= account.id %>/withdraw" method="POST">
+          <div class="form-group">
+            <label for="withdraw-amount">Amount:</label>
+            <input
+              type="number"
+              id="withdraw-amount"
+              name="amount"
+              step="0.01"
+              min="0.01"
+              max="<%= account.balance %>"
+              required
+              placeholder="0.00"
+            >
+          </div>
+          <button type="submit" class="btn btn-danger">Withdraw</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="transaction-history">
+      <h2>📋 Transaction History</h2>
+      <% if (transactions.length === 0) { %>
+        <p class="empty-state">No transactions yet. Make a deposit to get started!</p>
+      <% } else { %>
+        <table class="transactions-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Balance After</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% transactions.forEach(transaction => { %>
+              <tr class="transaction-<%= transaction.type %>">
+                <td><%= new Date(transaction.timestamp).toLocaleString() %></td>
+                <td>
+                  <% if (transaction.type === 'deposit') { %>
+                    <span class="badge badge-deposit">Deposit</span>
+                  <% } else if (transaction.type === 'withdrawal') { %>
+                    <span class="badge badge-withdrawal">Withdrawal</span>
+                  <% } else { %>
+                    <span class="badge badge-interest">Interest</span>
+                  <% } %>
+                </td>
+                <td class="amount-<%= transaction.type %>">
+                  <% if (transaction.type === 'withdrawal') { %>
+                    -$<%= transaction.amount.toFixed(2) %>
+                  <% } else { %>
+                    +$<%= transaction.amount.toFixed(2) %>
+                  <% } %>
+                </td>
+                <td>$<%= transaction.balanceAfter.toFixed(2) %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>
