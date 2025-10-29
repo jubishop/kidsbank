@@ -113,11 +113,11 @@
           <tbody>
             <% transactions.forEach(transaction => { %>
               <tr class="transaction-<%= transaction.type %>">
-                <td><%= new Date(transaction.timestamp).toLocaleString() %></td>
-                <td class="transaction-description">
+                <td data-label="Date:"><%= new Date(transaction.timestamp).toLocaleString() %></td>
+                <td data-label="Description:" class="transaction-description">
                   <%= transaction.description || '-' %>
                 </td>
-                <td>
+                <td data-label="Type:">
                   <% if (transaction.type === 'deposit') { %>
                     <span class="badge badge-deposit">Deposit</span>
                   <% } else if (transaction.type === 'withdrawal') { %>
@@ -126,14 +126,14 @@
                     <span class="badge badge-interest">Interest</span>
                   <% } %>
                 </td>
-                <td class="amount-<%= transaction.type %>">
+                <td data-label="Amount:" class="amount-<%= transaction.type %>">
                   <% if (transaction.type === 'withdrawal') { %>
                     -$<%= transaction.amount.toFixed(2) %>
                   <% } else { %>
                     +$<%= transaction.amount.toFixed(2) %>
                   <% } %>
                 </td>
-                <td>$<%= transaction.balanceAfter.toFixed(2) %></td>
+                <td data-label="Balance After:">$<%= transaction.balanceAfter.toFixed(2) %></td>
               </tr>
             <% }); %>
           </tbody>

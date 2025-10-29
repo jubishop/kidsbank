@@ -430,19 +430,42 @@ header h1 {
   margin-bottom: 30px;
 }
 
+/* Table Wrapper for Mobile Scroll */
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -5px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+
   .container {
-    padding: 20px;
+    padding: 15px;
+    border-radius: 10px;
   }
 
   header h1 {
-    font-size: 2em;
+    font-size: 1.8em;
   }
 
+  .subtitle {
+    font-size: 1em;
+  }
+
+  /* Account Grid - Single Column */
+  .accounts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Account Header */
   .account-header {
     flex-direction: column;
     text-align: center;
+    padding: 20px 15px;
   }
 
   .account-info {
@@ -454,12 +477,105 @@ header h1 {
     font-size: 2.5em;
   }
 
-  .transactions-table {
-    font-size: 0.9em;
+  /* Transaction Forms - Stack Vertically */
+  .transaction-forms {
+    grid-template-columns: 1fr;
   }
 
-  .transactions-table th,
+  .form-container {
+    padding: 20px 15px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+
+  /* Transaction Table - Mobile Optimized */
+  .transactions-table {
+    font-size: 0.85em;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .transactions-table thead,
+  .transactions-table tbody,
+  .transactions-table tr {
+    display: block;
+  }
+
+  .transactions-table thead {
+    display: none; /* Hide header on mobile */
+  }
+
+  .transactions-table tbody tr {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    background: white;
+    display: block;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
   .transactions-table td {
-    padding: 10px 5px;
+    display: block;
+    text-align: left;
+    padding: 8px 0;
+    border: none;
+    white-space: normal;
+  }
+
+  .transactions-table td:before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: inline-block;
+    width: 110px;
+    margin-right: 10px;
+    color: #667eea;
+  }
+
+  .badge {
+    display: inline-block;
+    margin-left: 5px;
+  }
+
+  /* Buttons */
+  .btn {
+    padding: 10px 20px;
+    font-size: 1em;
+  }
+
+  /* Messages */
+  .message {
+    padding: 12px 15px;
+    font-size: 0.95em;
+  }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 1.5em;
+  }
+
+  .balance-amount {
+    font-size: 2em;
+  }
+
+  .form-container h2 {
+    font-size: 1.3em;
+  }
+
+  .account-card h2 {
+    font-size: 1.5em;
+  }
+
+  .balance {
+    font-size: 2em;
   }
 }
