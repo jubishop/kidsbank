@@ -579,3 +579,173 @@ header h1 {
     font-size: 2em;
   }
 }
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #e0e0e0;
+  }
+
+  .container {
+    background: #1e1e1e;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Headers */
+  header {
+    border-bottom-color: #667eea;
+  }
+
+  header h1 {
+    color: #8b9efc;
+  }
+
+  .subtitle {
+    color: #b0b0b0;
+  }
+
+  .back-link {
+    color: #8b9efc;
+  }
+
+  /* Messages */
+  .error-message {
+    background-color: #3d1f1f;
+    color: #ff6b6b;
+    border-color: #8b3a3a;
+  }
+
+  .success-message {
+    background-color: #1f3d1f;
+    color: #6bff6b;
+    border-color: #3a8b3a;
+  }
+
+  /* Forms */
+  .form-container {
+    background: #2a2a2a;
+  }
+
+  .form-container h2,
+  .form-container h3 {
+    color: #8b9efc;
+  }
+
+  .form-group label {
+    color: #e0e0e0;
+  }
+
+  .form-group input {
+    background-color: #333;
+    border-color: #555;
+    color: #e0e0e0;
+  }
+
+  .form-group input:focus {
+    border-color: #8b9efc;
+    background-color: #3a3a3a;
+  }
+
+  .form-help {
+    color: #b0b0b0;
+  }
+
+  /* Empty State */
+  .empty-state {
+    color: #666;
+  }
+
+  /* Transaction History */
+  .transaction-history h2 {
+    color: #8b9efc;
+  }
+
+  .transactions-table {
+    background: #2a2a2a;
+  }
+
+  .transactions-table thead {
+    background-color: #667eea;
+  }
+
+  .transactions-table tbody tr {
+    border-bottom-color: #444;
+  }
+
+  .transactions-table tbody tr:hover {
+    background-color: #333;
+  }
+
+  .transactions-table td {
+    color: #e0e0e0;
+  }
+
+  .badge-deposit {
+    background-color: #1f3d1f;
+    color: #6bff6b;
+  }
+
+  .badge-withdrawal {
+    background-color: #3d1f1f;
+    color: #ff6b6b;
+  }
+
+  .badge-interest {
+    background-color: #1f3d3d;
+    color: #6bffff;
+  }
+
+  .amount-deposit,
+  .amount-interest {
+    color: #4ade80;
+  }
+
+  .amount-withdrawal {
+    color: #f87171;
+  }
+
+  /* Settings */
+  .settings-container h2 {
+    color: #8b9efc;
+  }
+
+  .info-text {
+    color: #b0b0b0;
+  }
+
+  .current-info {
+    background: #2a2a2a;
+    color: #e0e0e0;
+  }
+
+  .info-box {
+    background: #1f2937;
+    border-left-color: #8b9efc;
+  }
+
+  .info-box h3 {
+    color: #8b9efc;
+  }
+
+  .info-box ul {
+    color: #d0d0d0;
+  }
+
+  /* Error Page */
+  .error-message {
+    color: #b0b0b0;
+  }
+
+  /* Mobile - Dark Mode */
+  @media (max-width: 768px) {
+    .transactions-table tbody tr {
+      background: #2a2a2a;
+      border-color: #444;
+    }
+
+    .transactions-table td:before {
+      color: #8b9efc;
+    }
+  }
+}
