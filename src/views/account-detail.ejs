@@ -96,7 +96,15 @@
     </div>
 
     <div class="transaction-history">
-      <h2>📋 Transaction History</h2>
+      <div class="history-header">
+        <h2>📋 Transaction History</h2>
+        <% if (transactions.length > 0) { %>
+          <label class="filter-checkbox">
+            <input type="checkbox" id="hideInterest" onchange="toggleInterestTransactions()">
+            Hide Interest
+          </label>
+        <% } %>
+      </div>
       <% if (transactions.length === 0) { %>
         <p class="empty-state">No transactions yet. Make a deposit to get started!</p>
       <% } else { %>
@@ -141,5 +149,16 @@
       <% } %>
     </div>
   </div>
+
+  <script>
+    function toggleInterestTransactions() {
+      const checkbox = document.getElementById('hideInterest');
+      const interestRows = document.querySelectorAll('.transaction-interest');
+
+      interestRows.forEach(row => {
+        row.style.display = checkbox.checked ? 'none' : '';
+      });
+    }
+  </script>
 </body>
 </html>
