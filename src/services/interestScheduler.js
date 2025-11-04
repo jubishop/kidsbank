@@ -2,8 +2,8 @@ const accountService = require('./accountService');
 const transactionService = require('./transactionService');
 
 /**
- * Get the Monday of the current week (start of day)
- * @returns {Date} The Monday date
+ * Get the Monday of the current week (at 10am)
+ * @returns {Date} The Monday date at 10am
  */
 function getCurrentMonday() {
   const now = new Date();
@@ -11,8 +11,44 @@ function getCurrentMonday() {
   const diff = day === 0 ? -6 : 1 - day; // Calculate days to Monday
   const monday = new Date(now);
   monday.setDate(now.getDate() + diff);
-  monday.setHours(0, 0, 0, 0); // Start of day
+  monday.setHours(10, 0, 0, 0); // 10am on Monday
   return monday;
+}
+
+/**
+ * Get all Mondays between a start date and now (inclusive of current week if it's Monday or later)
+ * @param {Date|null} startDate - The start date (last interest date)
+ * @returns {Date[]} Array of Monday dates at 10am
+ */
+function getMissedMondays(startDate) {
+  const mondays = [];
+  const currentMonday = getCurrentMonday();
+
+  // If no start date, return current Monday if we haven't passed it yet
+  if (!startDate) {
+    // Only return current Monday if today is Monday or later in the week
+    const now = new Date();
+    if (now >= currentMonday) {
+      mondays.push(currentMonday);
+    }
+    return mondays;
+  }
+
+  // Start from the Monday after the last interest date
+  const startMonday = new Date(startDate);
+  const dayOfWeek = startMonday.getDay();
+  const daysUntilNextMonday = dayOfWeek === 0 ? 1 : (8 - dayOfWeek);
+  startMonday.setDate(startMonday.getDate() + daysUntilNextMonday);
+  startMonday.setHours(10, 0, 0, 0);
+
+  // Generate all Mondays from start to current
+  let currentDate = new Date(startMonday);
+  while (currentDate <= currentMonday) {
+    mondays.push(new Date(currentDate));
+    currentDate.setDate(currentDate.getDate() + 7); // Next Monday
+  }
+
+  return mondays;
 }
 
 /**
@@ -25,66 +61,38 @@ function isMonday() {
 }
 
 /**
- * Parse ISO date string and get date only (ignoring time)
- * @param {string} isoString - ISO date string
- * @returns {Date|null}
- */
-function getDateOnly(isoString) {
-  if (!isoString) return null;
-  const date = new Date(isoString);
-  date.setHours(0, 0, 0, 0);
-  return date;
-}
-
-/**
- * Check if interest should be applied for an account
- * @param {Object} account - The account object
- * @returns {boolean}
- */
-function shouldApplyInterest(account) {
-  // Must be Monday
-  if (!isMonday()) {
-    return false;
-  }
-
-  // Skip if no interest rate
-  if (account.interestRate === 0) {
-    return false;
-  }
-
-  // Skip if no balance
-  if (account.balance === 0) {
-    return false;
-  }
-
-  // Check if interest was already applied this Monday
-  const currentMonday = getCurrentMonday();
-  const lastInterestDate = getDateOnly(account.lastInterestDate);
-
-  // Apply interest if:
-  // 1. Never applied before (lastInterestDate is null)
-  // 2. Last application was before this Monday
-  if (!lastInterestDate || lastInterestDate < currentMonday) {
-    return true;
-  }
-
-  return false;
-}
-
-/**
- * Check and apply interest for all accounts
+ * Check and apply interest for all accounts (retroactively if needed)
+ * This will apply interest for ALL missed Mondays since the last interest date
  */
 async function checkAndApplyInterest() {
   try {
     const accounts = await accountService.getAllAccounts();
 
     for (const account of accounts) {
-      if (shouldApplyInterest(account)) {
+      // Skip if no interest rate or zero balance
+      if (account.interestRate === 0 || account.balance === 0) {
+        continue;
+      }
+
+      // Get all Mondays where interest is owed
+      const lastInterestDate = account.lastInterestDate ? new Date(account.lastInterestDate) : null;
+      const missedMondays = getMissedMondays(lastInterestDate);
+
+      if (missedMondays.length === 0) {
+        continue;
+      }
+
+      console.log(`Processing ${missedMondays.length} missed interest payment(s) for account: ${account.name}`);
+
+      // Apply interest for each missed Monday
+      for (const monday of missedMondays) {
         try {
-          await transactionService.applyInterest(account.id);
-          console.log(`Interest applied to account: ${account.name}`);
+          const result = await transactionService.applyInterest(account.id, monday);
+          if (result) {
+            console.log(`  - Interest applied for ${monday.toISOString().split('T')[0]}: $${result.amount.toFixed(2)}`);
+          }
         } catch (error) {
-          console.error(`Failed to apply interest to account ${account.name}:`, error.message);
+          console.error(`  - Failed to apply interest for ${monday.toISOString().split('T')[0]}:`, error.message);
         }
       }
     }
@@ -111,7 +119,7 @@ function startScheduler() {
 
 module.exports = {
   checkAndApplyInterest,
-  shouldApplyInterest,
+  getMissedMondays,
   isMonday,
   getCurrentMonday,
   startScheduler

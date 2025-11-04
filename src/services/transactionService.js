@@ -104,9 +104,10 @@ async function withdraw(accountId, amount, description = null) {
 /**
  * Apply interest to an account
  * @param {string} accountId - The account ID
+ * @param {Date|string} customTimestamp - Optional custom timestamp for the interest transaction (defaults to now)
  * @returns {Promise<Object|null>} The created transaction or null if no interest to apply
  */
-async function applyInterest(accountId) {
+async function applyInterest(accountId, customTimestamp = null) {
   const account = await accountService.getAccount(accountId);
   if (!account) {
     throw new Error('Account not found');
@@ -128,6 +129,11 @@ async function applyInterest(accountId) {
   // Calculate new balance
   const newBalance = roundToTwoDecimals(account.balance + interestAmount);
 
+  // Use custom timestamp if provided, otherwise use current time
+  const timestamp = customTimestamp
+    ? (customTimestamp instanceof Date ? customTimestamp.toISOString() : customTimestamp)
+    : new Date().toISOString();
+
   // Create transaction record
   const transaction = {
     id: uuidv4(),
@@ -135,7 +141,7 @@ async function applyInterest(accountId) {
     type: 'interest',
     amount: interestAmount,
     balanceAfter: newBalance,
-    timestamp: new Date().toISOString(),
+    timestamp: timestamp,
     description: `Weekly interest at ${(account.interestRate * 100).toFixed(2)}%`
   };
 
@@ -143,8 +149,8 @@ async function applyInterest(accountId) {
   await accountService.updateBalance(accountId, newBalance);
   await db.createTransaction(transaction);
 
-  // Update last interest date
-  await accountService.updateLastInterestDate(accountId, new Date().toISOString());
+  // Update last interest date to the timestamp used
+  await accountService.updateLastInterestDate(accountId, timestamp);
 
   return transaction;
 }
