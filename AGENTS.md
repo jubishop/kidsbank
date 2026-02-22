@@ -303,6 +303,27 @@ npm run dev
 
 The application will be available at `http://localhost:3000`
 
+### Running with launchd (Always On)
+
+A launchd plist is installed at `~/Library/LaunchAgents/com.kidsbank.server.plist` to keep the server running automatically in the background.
+
+```bash
+# Load and start the service
+launchctl load ~/Library/LaunchAgents/com.kidsbank.server.plist
+
+# Stop and unload the service
+launchctl unload ~/Library/LaunchAgents/com.kidsbank.server.plist
+
+# Check if running
+launchctl list | grep kidsbank
+
+# View logs
+tail -f logs/kidsbank.log
+tail -f logs/kidsbank-error.log
+```
+
+The service starts automatically on login and restarts if it crashes. Logs are written to the `logs/` directory in the project root.
+
 ### Database
 
 - SQLite database file (`kidsbank.db`) is created automatically on first run

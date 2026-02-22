@@ -448,7 +448,7 @@ header h1 {
   margin-bottom: 20px;
 }
 
-.error-message {
+.error-container .error-message {
   font-size: 1.3em;
   color: #666;
   margin-bottom: 30px;
@@ -772,7 +772,7 @@ header h1 {
   }
 
   /* Error Page */
-  .error-message {
+  .error-container .error-message {
     color: #b0b0b0;
   }
 

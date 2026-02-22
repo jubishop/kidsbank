@@ -10,59 +10,35 @@ const db = new sqlite3.Database(dbPath);
  */
 function initializeDatabase() {
   return new Promise((resolve, reject) => {
-    db.serialize(() => {
-      // Create accounts table
-      db.run(`
-        CREATE TABLE IF NOT EXISTS accounts (
-          id TEXT PRIMARY KEY,
-          name TEXT NOT NULL,
-          balance REAL NOT NULL DEFAULT 0,
-          interest_rate REAL NOT NULL DEFAULT 0,
-          created_at TEXT NOT NULL,
-          last_interest_date TEXT
-        )
-      `, (err) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-      });
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS accounts (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        balance REAL NOT NULL DEFAULT 0,
+        interest_rate REAL NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL,
+        last_interest_date TEXT
+      );
 
-      // Create transactions table
-      db.run(`
-        CREATE TABLE IF NOT EXISTS transactions (
-          id TEXT PRIMARY KEY,
-          account_id TEXT NOT NULL,
-          type TEXT NOT NULL CHECK(type IN ('deposit', 'withdrawal', 'interest')),
-          amount REAL NOT NULL,
-          balance_after REAL NOT NULL,
-          timestamp TEXT NOT NULL,
-          description TEXT,
-          FOREIGN KEY (account_id) REFERENCES accounts(id)
-        )
-      `, (err) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-      });
+      CREATE TABLE IF NOT EXISTS transactions (
+        id TEXT PRIMARY KEY,
+        account_id TEXT NOT NULL,
+        type TEXT NOT NULL CHECK(type IN ('deposit', 'withdrawal', 'interest')),
+        amount REAL NOT NULL,
+        balance_after REAL NOT NULL,
+        timestamp TEXT NOT NULL,
+        description TEXT,
+        FOREIGN KEY (account_id) REFERENCES accounts(id)
+      );
 
-      // Create indexes
-      db.run(`
-        CREATE INDEX IF NOT EXISTS idx_transactions_account_id
-        ON transactions(account_id)
-      `);
+      CREATE INDEX IF NOT EXISTS idx_transactions_account_id
+        ON transactions(account_id);
 
-      db.run(`
-        CREATE INDEX IF NOT EXISTS idx_transactions_timestamp
-        ON transactions(timestamp)
-      `, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
+      CREATE INDEX IF NOT EXISTS idx_transactions_timestamp
+        ON transactions(timestamp);
+    `, (err) => {
+      if (err) reject(err);
+      else resolve();
     });
   });
 }
